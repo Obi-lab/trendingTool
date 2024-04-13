@@ -4,6 +4,7 @@ const { setTimeout } = require('node:timers/promises');
 //const puppeteer = require('puppeteer');
 const request = require('request-promise');
 const fs = require('fs');
+const os = require('os');
 
 const PROCESS_COUNT = 1;
 const THREAD_COUNT = 1000; // Number of simulations at one moment
@@ -46,12 +47,29 @@ async function accessPumboAndDextools() {
   // Increase index for the next proxy address (if index exceeds the length of the array, it will return to the beginning)
   proxyIndex = (proxyIndex + 1) % proxies.length;
 
+
+
+  let executablePath;
+
+  if (os.platform() === 'win32') {
+    executablePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+  } else if (os.platform() === 'darwin') {
+    executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  } else if (os.platform() === 'linux') {
+    executablePath = '/usr/bin/google-chrome';
+  } else {
+    throw new Error('Unsupported operating system');
+  }
+
+  console.log("os:",os.platform());
+
   const browser = await puppeteer.launch({
     headless: false, // Display Chrome browser
     //executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',//C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
     //executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', //Where your GOOGLE CHROMEDRIVER is located
-    executablePath: '/usr/bin/google-chrome', //for ubuntu
+    //executablePath: '/usr/bin/google-chrome', //for ubuntu
     //executablePath :'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',//
+    executablePath: executablePath,
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
